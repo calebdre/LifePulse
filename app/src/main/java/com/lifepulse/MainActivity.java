@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        activator.authenticate();
+        new PulseFinder().findPulse(this);
     }
 
     @Override
@@ -33,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
     public void onEvent(AuthenticatedEvent e){
         AuthToken token = e.getToken();
         activator.getDevices(token);
+    }
+
+    public void onEvent(PulseFoundEvent e){
+        activator.authenticate();
     }
 
     public void onEvent(DevicesReceivedEvent e){
