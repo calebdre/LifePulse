@@ -1,25 +1,17 @@
 package com.lifepulse;
 
-import android.content.Context;
 import android.content.res.Resources;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
-
 import com.harman.pulsesdk.DeviceModel;
 import com.harman.pulsesdk.ImplementPulseHandler;
 import com.harman.pulsesdk.PulseColor;
 import com.harman.pulsesdk.PulseNotifiedListener;
 import com.harman.pulsesdk.PulseThemePattern;
-
-import java.lang.reflect.Method;
 import java.util.Timer;
-import java.util.TimerTask;
 
 //purpose is to connect to the pulse
-public class Connector extends AppCompatActivity implements PulseNotifiedListener {
+public class Connector implements PulseNotifiedListener {
     static String Tag = "PulseDemo";
     Timer mTimer=null;
     boolean isConnectBT;
@@ -29,56 +21,24 @@ public class Connector extends AppCompatActivity implements PulseNotifiedListene
     //FragPattern fragPattern;
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        pulseHandler.ConnectMasterDevice(this);
-        pulseHandler.registerPulseNotifiedListener(this);
-    }
 
     public ImplementPulseHandler pulseHandler = new ImplementPulseHandler();
 
 
-    @Override
-    protected void onDestroy(){
-        super.onDestroy();
-        isActive = false;
-        System.exit(0);
-    }
+
     public static int getStatusBarHeight() {
         return Resources.getSystem().getDimensionPixelSize(
                 Resources.getSystem().getIdentifier("status_bar_height",
                         "dimen", "android"));
     }
 
-    private static boolean checkDeviceHasNavigationBar(Context context) {
-        boolean hasNavigationBar = false;
-        Resources rs = context.getResources();
-        int id = rs.getIdentifier("config_showNavigationBar", "bool", "android");
-        if (id > 0) {
-            hasNavigationBar = rs.getBoolean(id);
-        }
-        try {
-            Class systemPropertiesClass = Class.forName("android.os.SystemProperties");
-            Method m = systemPropertiesClass.getMethod("get", String.class);
-            String navBarOverride = (String) m.invoke(systemPropertiesClass, "qemu.hw.mainkeys");
-            if ("1".equals(navBarOverride)) {
-                hasNavigationBar = false;
-            } else if ("0".equals(navBarOverride)) {
-                hasNavigationBar = true;
-            }
-        } catch (Exception e) {
-        }
+    public void setBackground(){
+//        pulseHander.SetBackgroundColor(new PulseColor(back_r, back_g, back_b), backSlave);
+//        break;
 
-        return hasNavigationBar;
     }
 
-    public int pxTodip(Context context, float pxValue) {
-        final float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (pxValue / scale + 0.5f);
-    }
-
-    public void pick_color(View v){
+    public void pick_color(){
         pulseHandler.CaptureColorFromColorPicker();
     }
 
@@ -124,7 +84,6 @@ public class Connector extends AppCompatActivity implements PulseNotifiedListene
         Log.i(Tag, "onConnectMasterDevice");
         isConnectBT = true;
         cancelTimer();
-        Toast.makeText(this, "onConnectMasterDevice", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -132,7 +91,7 @@ public class Connector extends AppCompatActivity implements PulseNotifiedListene
         Log.i(Tag, "onDisconnectMasterDevice");
         isConnectBT = false;
         //setTimer();
-        Toast.makeText(this, "onDisconnectMasterDevice", Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
@@ -152,12 +111,7 @@ public class Connector extends AppCompatActivity implements PulseNotifiedListene
     public void onSoundEvent(final int soundLevel) {
         //Toast.makeText(this, "onSoundEvent: level=" + soundLevel, Toast.LENGTH_SHORT);
         Log.i(Tag, "soundLevel:"+soundLevel);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                //fragMic.setSoundValue(soundLevel);
-            }
-        });
+
     }
 
     @Override
@@ -165,14 +119,7 @@ public class Connector extends AppCompatActivity implements PulseNotifiedListene
 //        Toast.makeText(this,
 //                "onRetCaptureColor: red=" + capturedColor.red + " green=" + capturedColor.green + " blue=" + capturedColor.blue,
 //                Toast.LENGTH_SHORT);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                pulseHandler.SetBackgroundColor(capturedColor, false);
-                //fragCamera.setPickColorVal(String.format("#%02x%02x%02x", capturedColor.red, capturedColor.green, capturedColor.blue));
-                Log.i(Tag, "red:" + (((int)capturedColor.red)&0xff) + " green:" + (((int)capturedColor.green)&0xff) + " blue:" + (((int)capturedColor.blue)&0xff));
-            }
-        });
+
     }
 
     @Override
