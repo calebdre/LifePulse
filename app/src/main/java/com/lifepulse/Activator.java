@@ -18,6 +18,24 @@ import java.util.Map;
 import de.greenrobot.event.EventBus;
 
 public class Activator {
+    public static void emptyPost(String url){
+        Request.Builder builder = new Request.Builder();
+        builder.post(null);
+        builder.url(url);
+        final Request request = builder.build();
+        OkHttpClient client = new OkHttpClient();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+
+            }
+        });
+    }
 
     public void authenticate(){
         Request.Builder builder = new Request.Builder();

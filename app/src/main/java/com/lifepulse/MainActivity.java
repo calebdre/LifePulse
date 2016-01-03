@@ -17,14 +17,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
 
     public void onEvent(AuthenticatedEvent e){
-        AuthToken token = e.getToken();
-        FlowPoler poller = new FlowPoler();
+        FlowPoler poller = new FlowPoler(this);
         poller.startPollStream();
     }
 

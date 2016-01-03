@@ -21,6 +21,13 @@ public class PulseFinder {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
+                if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
+                    context.unregisterReceiver(this);
+                    adapter.cancelDiscovery();
+                    EventBus.getDefault().post(new PulseFoundEvent(false));
+                    return;
+                }
+
                 // When discovery finds a device
                 if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                     // Get the BluetoothDevice object from the Intent
@@ -36,7 +43,7 @@ public class PulseFinder {
                             createBondMethod.invoke(device);
                             adapter.cancelDiscovery();
                             context.unregisterReceiver(this);
-                            EventBus.getDefault().post(new PulseFoundEvent());
+                            EventBus.getDefault().post(new PulseFoundEvent(true));
                         } catch (ClassNotFoundException e) {
                             e.printStackTrace();
                         } catch (NoSuchMethodException e) {
@@ -52,11 +59,13 @@ public class PulseFinder {
         };
 
         if(adapter.getBondedDevices().size() == 0){
-            IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(BluetoothDevice.ACTION_FOUND);
+            filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
             context.registerReceiver(receiver, filter);
             adapter.startDiscovery();
         }else{
-            EventBus.getDefault().post(new PulseFoundEvent());
+            EventBus.getDefault().post(new PulseFoundEvent(true));
         }
     }
 }

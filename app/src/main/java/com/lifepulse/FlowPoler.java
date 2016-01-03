@@ -1,5 +1,8 @@
 package com.lifepulse;
 
+import android.app.Activity;
+import android.util.Log;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -18,25 +21,10 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 public class FlowPoler {
-    private boolean isActive = false;
+    Activity activity;
 
-    public void startPoll(AuthToken authToken){
-        isActive = true;
-        Request.Builder builder = new Request.Builder();
-        builder.get();
-        builder.url("https://run-west.att.io/4095e2904b934/883c44cfa9e6/a649986eff9bc0d/in/flow/getWs");
-        final Request request = builder.build();
-        final OkHttpClient client = new OkHttpClient();
-        new Thread(){
-            @Override
-            public void run() {
-                try {
-                    Response response = client.newCall(request).execute();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
+    public FlowPoler(Activity activity) {
+        this.activity = activity;
     }
 
     public void startPollStream(){
@@ -48,6 +36,7 @@ public class FlowPoler {
                 "    \"userId\": \"553474442\",\n" +
                 "    \"domain\": \"DL\"\n" +
                 "}"));
+        //552494308
         final Request request = builder.build();
         final OkHttpClient client = new OkHttpClient();
         client.newCall(request).enqueue(new Callback() {
@@ -70,7 +59,8 @@ public class FlowPoler {
         BufferedInputStream bis = new BufferedInputStream(is);
         BufferedReader br = new BufferedReader(new InputStreamReader(bis));
         String line;
-        DigitalLifeParser dlParser = new DigitalLifeParser();
+        DigitalLifeParser dlParser = new DigitalLifeParser(activity);
+        Log.d("WATCHING", "watching for events");
         while( (line = br.readLine()) != null) {
             line = line.replaceAll("\"\"\"", "");
             if(!line.startsWith("*")) {

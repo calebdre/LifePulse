@@ -12,7 +12,7 @@ import java.util.Timer;
 
 //purpose is to connect to the pulse
 public class Connector implements PulseNotifiedListener {
-    static String Tag = "PulseDemo";
+    static String Tag = "WATCHING";
     Timer mTimer=null;
     boolean isConnectBT;
     boolean isActive = true;
@@ -20,11 +20,7 @@ public class Connector implements PulseNotifiedListener {
     //FragCamera fragCamera;
     //FragPattern fragPattern;
 
-
-
     public ImplementPulseHandler pulseHandler = new ImplementPulseHandler();
-
-
 
     public static int getStatusBarHeight() {
         return Resources.getSystem().getDimensionPixelSize(
@@ -82,8 +78,6 @@ public class Connector implements PulseNotifiedListener {
     @Override
     public void onConnectMasterDevice() {
         Log.i(Tag, "onConnectMasterDevice");
-        isConnectBT = true;
-        cancelTimer();
     }
 
     @Override
