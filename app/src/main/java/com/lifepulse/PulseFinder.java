@@ -55,6 +55,8 @@ public class PulseFinder {
             IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
             context.registerReceiver(receiver, filter);
             adapter.startDiscovery();
+        }else{
+            EventBus.getDefault().post(new PulseFoundEvent());
         }
     }
 }

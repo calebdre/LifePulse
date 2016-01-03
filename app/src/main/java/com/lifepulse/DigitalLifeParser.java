@@ -3,15 +3,7 @@ package com.lifepulse;
 import com.google.gson.JsonObject;
 import com.harman.pulsesdk.PulseThemePattern;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class DigitalLifeParser {
-    private List<DigitalLifeDevice> dlDevices;
-
-    public DigitalLifeParser(List<DigitalLifeDevice> dlDevices) {
-        this.dlDevices = dlDevices;
-    }
 
     public void parse(JsonObject event) {
         String label = event.get("label").getAsString();
@@ -21,7 +13,7 @@ public class DigitalLifeParser {
             switch (label){
                 case "switch-on":
                         // animate full yellow going down
-                    pattern.;
+
                     pattern.onLEDPatternChanged(PulseThemePattern.PulseTheme_Hourglass);
                     break;
                 case "switch-off":
