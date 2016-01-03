@@ -2,14 +2,7 @@ package com.lifepulse;
 
 import com.google.gson.JsonObject;
 
-import java.util.List;
-
 public class DigitalLifeParser {
-    private List<DigitalLifeDevice> dlDevices;
-
-    public DigitalLifeParser(List<DigitalLifeDevice> dlDevices) {
-        this.dlDevices = dlDevices;
-    }
 
     public void parse(JsonObject event) {
         String label = event.get("label").getAsString();
