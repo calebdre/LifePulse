@@ -10,11 +10,9 @@ import android.content.IntentFilter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import de.greenrobot.event.EventBus;
-
 public class PulseFinder {
 
-    public void findPulse(Context context){
+    public void findPulse(Context context, final PulseFoundCallback callback){
         final BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         adapter.enable();
         BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -24,7 +22,7 @@ public class PulseFinder {
                 if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
                     context.unregisterReceiver(this);
                     adapter.cancelDiscovery();
-                    EventBus.getDefault().post(new PulseFoundEvent(false));
+                    callback.onPulseFind(false);
                     return;
                 }
 
@@ -43,7 +41,7 @@ public class PulseFinder {
                             createBondMethod.invoke(device);
                             adapter.cancelDiscovery();
                             context.unregisterReceiver(this);
-                            EventBus.getDefault().post(new PulseFoundEvent(true));
+                            callback.onPulseFind(true);
                         } catch (ClassNotFoundException e) {
                             e.printStackTrace();
                         } catch (NoSuchMethodException e) {
@@ -65,7 +63,11 @@ public class PulseFinder {
             context.registerReceiver(receiver, filter);
             adapter.startDiscovery();
         }else{
-            EventBus.getDefault().post(new PulseFoundEvent(true));
+            callback.onPulseFind(true);
         }
+    }
+
+    public interface PulseFoundCallback{
+        void onPulseFind(boolean isFound);
     }
 }
